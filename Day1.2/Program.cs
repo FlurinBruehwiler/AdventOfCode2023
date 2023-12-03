@@ -1,4 +1,4 @@
-﻿const string input = """
+﻿string input = """
                      two1nine
                      eightwothree
                      abcone2threexyz
@@ -8,11 +8,21 @@
                      7pqrstsixteen
                      """;
 
-var numbers = new List<string> { "one", "two", "three", "four", "five", "six", "seven", "eigth", "nine" };
+input = File.ReadAllText("input.txt");
 
-var res = input.Split("\n").Sum(x => int.Parse($"{Get(x, true)}{Get(x, false)}"));
+var numbers = new List<string> { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
+var res = input.Trim().Split("\n").Sum(x => int.Parse($"{GetWrap(x, true)}{GetWrap(x, false)}"));
 
 Console.WriteLine(res);
+
+int GetWrap(string x, bool first)
+{
+    x = x.Trim();
+    var res = Get(x, first);
+    Console.WriteLine($"{x}: {res}");
+    return res;
+}
 
 int Get(string x, bool first)
 {
@@ -43,7 +53,8 @@ bool Num(string luv, bool first, out int num, out int idx)
 {
     num = 0;
     idx = 0;
-    char? firstNum = first ? luv.FirstOrDefault(char.IsNumber) : luv.LastOrDefault(char.IsNumber);
+    var luvv = luv.Select(x => (char?)x);
+    char? firstNum = first ? luvv.FirstOrDefault(x => char.IsNumber(x.Value)) : luvv.LastOrDefault(c => char.IsNumber(c.Value));
 
     if (firstNum is null)
         return false;
@@ -57,7 +68,7 @@ bool NumAsString(string luv, bool first, out int num, out int idx)
 {
     num = 0;
     idx = 0;
-    var ll = numbers.Select(x => new { idx =  luv.IndexOf(x, StringComparison.Ordinal), num = x});
+    var ll = numbers.Select(x => new { idx =  luv.IndexOf(x, StringComparison.Ordinal), num = x}).Where(x => x.idx != -1).OrderBy(x => x.idx);
     var abc = first ? ll.FirstOrDefault(x => x.idx != -1) : ll.LastOrDefault(x => x.idx != -1);
     if (abc is null)
         return false;

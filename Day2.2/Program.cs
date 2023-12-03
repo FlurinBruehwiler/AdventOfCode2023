@@ -11,12 +11,14 @@ input = File.ReadAllText("input.txt");
 var res = input.Trim().Split("\n").Select(x => new
 {
     id = int.Parse(x.Split(' ', ':')[1].Trim()),
-    possible = !x.Split(':',';', ',').Skip(1)
+    power = x.Split(':', ';', ',').Skip(1)
         .Select(o => new
         {
             num = int.Parse(o.Trim().Split(" ").First().Trim()),
             color = o.Trim().Split().Last().Trim()
-        }).Any(l => l.color == "red" && l.num > 12 || l.color == "green" && l.num > 13 || l.color == "blue" && l.num > 14)
-}).Where(x => x.possible).Sum(x => x.id);
+        }).GroupBy(b => b.color)
+        .Select(b => b.Max(z => z.num))
+        .Aggregate((b, c) => b * c)
+}).Sum(x => x.power);
 
 Console.WriteLine(res);

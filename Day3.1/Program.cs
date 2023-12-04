@@ -13,7 +13,10 @@
 
 input = File.ReadAllText("input.txt");
 
-var inputLines = input.Trim().Split("\n");
+var inputLines = input.Trim()
+    .Split("\n")
+    .Select(x => x.Trim())
+    .ToList();
 
 var numBuilder = string.Empty;
 
@@ -21,7 +24,7 @@ var numbers = new List<Number>();
 
 var width = inputLines.First().Length;
 
-for (var i = 0; i < inputLines.Length; i++)
+for (var i = 0; i < inputLines.Count; i++)
 {
     var inputLine = inputLines[i];
     for (var y = 0; y < inputLine.Length; y++)
@@ -63,13 +66,12 @@ bool IsPartNumber(Number number)
         }
     }
 
-    Console.WriteLine(number.Value);
     return false;
 }
 
 bool IsSymbol(int row, int column)
 {
-    if (row < 0 || row >= inputLines.Length)
+    if (row < 0 || row >= inputLines.Count)
         return false;
 
     if (column < 0 || column >= width)
